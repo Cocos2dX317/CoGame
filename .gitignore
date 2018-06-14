@@ -6,7 +6,6 @@
 .libs
 *.so
 *.so.[0-9]*
-*.a
 *.pyc
 *.pyo
 *.rej
