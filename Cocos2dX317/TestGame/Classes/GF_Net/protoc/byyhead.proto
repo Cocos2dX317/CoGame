@@ -1,0 +1,25 @@
+package byyhead;
+
+//消息头定义
+message CByyHead
+{
+    required uint32 main_ver        = 1;    // 协议主版本号,客户端填写 1
+    required uint32 sub_ver         = 2;    // 协议子版本号,客户端填写 0
+    required uint32 main_cmd        = 3;    // 主命令字
+    required uint32 sub_cmd         = 4;    // 子命令字
+    required uint32 sequence        = 5;    // 序列号: 用于检验每个回包正确性
+    required uint32 enc_type        = 6;    // 加密方式  0:无加密 1:tea加密
+	required uint32 pro_type        = 7;    // 协议类型, 0:pb 1:json
+    required uint32 from_uid        = 8;    // 发送方的uid,没有则填写0
+    optional uint32 to_uid          = 9;    // 接收方的uid,选填
+    optional uint32 flow_id         = 10;   // RPC调用ID:每个客户端请求唯一标识,记录的是代理服务上的flow_id
+    optional int32  err             = 11;   // 框架错误码
+    optional int32  result          = 12;   // 业务接口返回值
+    optional string err_msg         = 13;   // 错误描述
+}
+
+//消息体定义
+message CByyBody
+{
+	required bytes data             = 1;    // 消息体数据
+}

@@ -24,6 +24,10 @@
 
 #include "HelloWorldScene.h"
 #include "SimpleAudioEngine.h"
+#include "GF_WindowsManager.h"
+#include "TestWin.h"
+#include "GF_RewardTip.h"
+#include "WebSprite.h"
 
 USING_NS_CC;
 
@@ -115,9 +119,34 @@ bool HelloWorld::init()
         // add the sprite as a child to this layer
         this->addChild(sprite, 0);
     }
+    
+    //
+    
+    test();
+    
+    WebSpriteAgentInst->init();
+    WebSprite* webimg = WebSpriteAgentInst->createWebSprite("hello","https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1529062594&di=af907e2f7610feffe5a7ba4a2a3a537f&imgtype=jpg&er=1&src=http%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F01c38256f2795b6ac7257d2001865c.png%401280w_1l_2o_100sh.png");
+    
+    this->addChild(webimg);
+    webimg->setPosition(visibleSize/2);
+    
     return true;
 }
 
+void HelloWorld::test()
+{
+    auto visibleSize = Director::getInstance()->getVisibleSize();
+    //创建根场景
+    this->addChild(GF_Windows_inis->windows());
+    
+    //添加测试窗口
+    GF_RewardTip* test = GF_RewardTip::create();
+    test->setPosition(visibleSize/2);
+    GF_Windows_inis->addWindow(test,kcTest,kcNormal);
+    test->myinit(1);
+    
+    //
+}
 
 void HelloWorld::menuCloseCallback(Ref* pSender)
 {

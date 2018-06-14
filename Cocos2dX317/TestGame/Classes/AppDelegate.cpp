@@ -25,7 +25,7 @@
 #include "AppDelegate.h"
 #include "HelloWorldScene.h"
 
-// #define USE_AUDIO_ENGINE 1
+#define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
 
 #if USE_AUDIO_ENGINE && USE_SIMPLE_AUDIO_ENGINE
@@ -42,7 +42,7 @@ using namespace CocosDenshion;
 
 USING_NS_CC;
 
-static cocos2d::Size designResolutionSize = cocos2d::Size(480, 320);
+static cocos2d::Size designResolutionSize = cocos2d::Size(1280, 720);
 static cocos2d::Size smallResolutionSize = cocos2d::Size(480, 320);
 static cocos2d::Size mediumResolutionSize = cocos2d::Size(1024, 768);
 static cocos2d::Size largeResolutionSize = cocos2d::Size(2048, 1536);
@@ -97,7 +97,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     director->setAnimationInterval(1.0f / 60);
 
     // Set the design resolution
-    glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::NO_BORDER);
+    glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::FIXED_HEIGHT);
     auto frameSize = glview->getFrameSize();
     // if the frame's height is larger than the height of medium size.
     if (frameSize.height > mediumResolutionSize.height)
@@ -116,6 +116,15 @@ bool AppDelegate::applicationDidFinishLaunching() {
     }
 
     register_all_packages();
+    //====================================== init resources ======================================
+    //设置资源路径
+    FileUtils* fileUtils = FileUtils::getInstance();
+    std::vector<std::string> searchPaths;
+    if (true)
+    {
+        searchPaths.push_back("Res1280_720");
+    }
+    fileUtils->setSearchPaths(searchPaths);
 
     // create a scene. it's an autorelease object
     auto scene = HelloWorld::createScene();

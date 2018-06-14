@@ -1,0 +1,451 @@
+package mahjong_msg;
+
+//登陆命令
+message loginRequest
+{
+    required string   skey           = 1;    //  skey
+	required string   version        = 2;    //  版本
+	optional int32    base_money     = 3;    //  底注：私人场使用
+	optional int32    min_money      = 4;    //  携带金币下限：私人场使用
+	optional int32    room_id        = 5;    //  房间号：私人场使用
+}
+
+message loginResponse
+{
+    required int32    vid            = 1;    //  vid:房间号 登陆不成功的会被赋值-1
+}
+
+//登出命令
+message logoutRequest
+{
+	optional uint32   uid            = 1;    //  uid:这里仅用作占位，客户端不需要填写
+}
+
+//广播玩家登出消息
+message logoutMsg
+{
+	required uint32  uid            = 1;     //  uid
+    required int32   seatid         = 2;     //  座位号
+	required int32   logout_type    = 3;     //  登出的类型
+	required string  alertStr       = 4;     //  提示语
+}
+
+
+//获取在线人数
+message getonlineRequest
+{
+	optional uint32   uid            = 1;    //  uid:这里仅用作占位，客户端不需要填写
+}
+
+message getonlineResponse
+{
+	required uint32   online         = 1;    //  online:在线人数
+	required uint32   activecount    = 2;    //  activeCount:活跃人数
+}
+
+//选缺
+message xuanqueRequest
+{
+	required int32    quetype        = 1; 
+}
+
+message xuanqueResponse
+{
+	optional uint32   uid            = 1;    //  uid:这里仅用作占位，选填
+}
+
+//换牌
+message huanpaiRequest
+{
+	repeated int32    card_value      = 1;    //  换牌牌型
+	repeated int32    card_index      = 2;    //  换牌牌序号
+}
+
+message huanpaiResponse
+{
+	optional uint32   uid            = 1;    //  uid:这里仅用作占位，选填
+}
+
+//取消托管
+message canclerobotRequest
+{
+	optional uint32   uid            = 1;    //  uid:这里仅用作占位，选填
+}
+
+message canclerobotResponse
+{
+	optional uint32   uid            = 1;    //  uid:这里仅用作占位，选填
+}
+
+//通知玩家准备 在玩家登陆成功后，由业务服务器主动推送的消息，校验的消息序列号为发送登陆命令的序列号
+message notifyreadyMsg
+{
+	required int32    cd             = 1;    //  cd:准备剩余时间
+	required int32    flag           = 2;    //  
+}
+
+//业务服务推送提示语给特定玩家
+message alertMsg
+{
+	required string    alertStr      = 1;    //  alertStr:提示语
+}
+
+//玩家准备请求
+message readyRequest
+{
+	optional uint32   uid            = 1;    //  uid:这里仅用作占位，选填
+}
+
+//定向广播玩家准备的消息，由代理服务推送给玩家
+message goreadyMsg
+{
+	required int32    seatid         = 1;    //  发起准备的玩家座位号
+	required int32    uid            = 2;    //  发起准备的玩家uid
+}
+
+//业务服务向玩家发出游戏开始消息，由代理服务推送给玩家
+message notifygamestartMsg
+{
+	required int32    seatid         = 1;    //玩家座位号
+	required int32    bseatid        = 2;    //要打牌的座位号
+	required uint32   buid           = 3;    //要打牌的uid
+	required int32    p1_num         = 4;
+	required int32    p2_num         = 5;
+	repeated int32    cards          = 6;    //分配的手牌
+	optional int32    train_money    = 7;    //练习场积分
+	
+}
+
+//广播玩家金币
+message broadmoneyMsg
+{
+	repeated int32  players_money    = 1;
+}
+
+//广播玩家补花牌
+message replaceflowerMsg
+{
+	required int32    seatid         = 1;    //玩家座位号
+	repeated int32    take_cards     = 2;    //补花的牌
+	repeated int32    flower_cards   = 3;    //花牌
+	optional int32    start_game     = 4;    //是否为开局补花，1:是 0:否
+}
+
+//业务服务向玩家发出换牌通知，由代理服务推送给玩家
+message notifyhuanpaiMsg
+{
+	required int32        seatid         = 1;
+	required uint32       state          = 2;
+	required int32        cd             = 3;
+	repeated int32        hpinfos        = 4;
+}
+
+//业务服务向玩家发出选缺通知，由代理服务推送给玩家
+message notifyxuanqueMsg
+{
+	required int32       seatid      = 1;
+	required uint32      state       = 2;
+	required int32       cd          = 3;
+	required int32       quetype     = 4;
+}
+
+//业务服务向玩家发出选缺结果通知，由代理服务推送给玩家
+message notifyxqresultMsg
+{
+	repeated XQResult xq_result      = 1;
+	message XQResult
+	{
+		required int32    seatid     = 1;
+		required uint32   uid        = 2;   
+		required int32    quetype    = 3;
+	}
+}
+
+//业务服务向玩家发出换牌结果通知，由代理服务推送给玩家
+message notifyhpresultMsg
+{
+	repeated int32   hpinfos_index      = 1;   //换牌序号
+	repeated int32   hpinfos_value      = 2;   //换牌牌型
+	repeated int32   getinfos           = 3;   //换牌的新的集合
+}
+
+//定向组播玩家上线消息  由业务服务发给代理服务，代理服务组播给特定玩家
+message loginMsg
+{
+	required int32    seatid            = 2;     
+	required int32    betting           = 3;
+	required string   name              = 4;
+	required int32    sex               = 5;
+	required string   avatar            = 6;
+	required string   avatar_1          = 7;
+	required int32    max_fan           = 8;
+	required int32    loveliness_amt    = 9;
+	required int64    total_win_money   = 10;
+	required int64    money             = 11;
+	required int64    train_money       = 12;
+	required int64    taste_money       = 13;
+	required int32    total_board       = 14;
+	required int32    total_win         = 15;
+	required int32    vlevel            = 16;
+	required string   ps                = 17;
+}
+
+//玩家打牌请求
+message dealcardRequest
+{
+	required int32    dtype             = 1;
+	required int32    cardv             = 2;
+	required int32    seatid            = 3;
+	required int32    index             = 4;
+}
+
+message dealcardResponse
+{
+	optional uint32   uid            = 1;    //  uid:这里仅用作占位，选填
+}
+
+//返回要操作的数据 玩家在发送打牌请求后会收到
+message selfdealMsg
+{
+	required int32    seatid         = 1;
+	required int32    ftype          = 2;
+	required int64    money          = 3;
+	required int32    cardnums       = 4;
+	required int32    cd             = 5;
+	required int32    t_cardv        = 6;
+	required int32    cardv          = 7;
+	repeated int32    dealinfos      = 8;
+	repeated int32    cards          = 9;
+	repeated EatCard  eatcards       = 10;
+	required uint32   uid            = 11;
+	required int32    train_money    = 12;
+	required int32    taste_money    = 13;
+	optional int32    pengcv         = 14;
+	optional int32    other_t_cardv  = 15;
+	optional int32    other_cardv    = 16;
+	message EatCard
+	{
+		repeated int32     cards     = 1;
+	}
+}
+
+//广播下一个操作的玩家
+message notifynextdealMsg
+{
+	required uint32   uid            = 1;   //下一个操作的玩家的uid
+	required int32    seatid         = 2;   //下一个操作的玩家的seatid
+	required int32    robot          = 3;   //是否机器人代打
+	required int32    cd             = 4;   //操作超时时间
+}
+
+//定向广播玩家打牌结果
+message dealcardMsg
+{
+	repeated int32    dealcards      = 1;
+	required uint32   uid            = 2;  //出牌的玩家
+	required int32    seatid         = 3;
+	required int32    cardnums       = 4;
+	required int32    cardv          = 5;
+	required int32    index          = 6;
+	required int32    dtype          = 7;
+	required int32    otype          = 8;
+	required int32    zmcount        = 9;
+	required int32    hpcount        = 10;
+	required int64    money          = 11;
+	required int32    train_money    = 12;
+	required int32    taste_money    = 13;
+	required int32    lastseatid     = 14;
+	required int32    qgflag         = 15;
+	repeated DealEnds dealends       = 16;
+	optional int32    mflag          = 17;
+	optional int32    qgdeal         = 18;
+	repeated int32    handcards      = 19;
+	repeated GangCard gangcards      = 20;
+	optional int32    pass_hu_count  = 21;
+	optional bool     tianting       = 22;
+	optional bool     haidilaoyue    = 23;
+	optional bool     miaoshouhuichun = 24;
+	optional int32    qgseatid       = 25;
+	
+	message DealEnds
+	{
+		required uint32    uid       = 1;
+		required int32     seatid    = 2;
+		required int32     beishu    = 3;
+		required int64     winmoney  = 4;
+		required int64     money     = 5;
+	}
+	
+	message GangCard
+	{
+		repeated int32     cards     = 1;
+		required int32     type      = 2;
+	}
+}
+
+//广播游戏结束结算消息
+message gameendMsg
+{
+	required int32         isliuju   = 1;
+	repeated PlayInfo      players   = 2;  
+	repeated FanInfo       faninfos  = 3;
+	
+	message PlayInfo
+	{
+		required uint32                 uid  = 1;
+		required int32               seatid  = 2;
+		required string                name  = 3;
+		required int64             winmoney  = 4;
+		required int32               beishu  = 5;
+		required int32          total_board  = 6;
+		required int32            total_win  = 7;
+		required int64                money  = 8;
+		required int32              max_fan  = 9;
+		required int32       loveliness_amt  = 10;
+		required int64       total_win_money = 11;
+		repeated int32       		  cards  = 12;
+		optional int32        pass_hu_count  = 14;
+		optional int32          train_money  = 15;
+		optional int32          taste_money  = 16;
+	}
+	
+	message FanInfo
+	{
+		required string       ftype      = 1;
+		required int32        beishu     = 2;
+		optional int64        winmoney   = 3;
+		optional int32        otype      = 4;
+	}
+}
+
+//玩家聊天请求
+message chatRequest
+{
+	required string          text        = 1;    //聊天内容
+	required int32           chatid      = 2;
+}
+
+//广播玩家认输的消息
+message giveupMsg
+{
+	required int32           seatid      = 1;    //认输的玩家座位号
+}
+
+//广播玩家聊天信息
+message chatMsg
+{
+	required uint32          uid         = 1;
+	required int32           seatid      = 2;
+	required string          text        = 3;
+	required int32           chatid      = 4;
+}
+
+//玩家发送普通表情
+message normalexpresionRequest
+{
+	required int32     expressionid      = 1;
+}
+
+//广播玩家发送的普通表情
+message normalexpresionMsg
+{
+	required uint32             uid      = 1;
+	required string            name      = 2;
+	required int32           seatid      = 3;
+	required int32     expressionid      = 4;
+}
+
+//玩家发送魔法表情
+message expresionRequest
+{
+	required int32        targetuid      = 1;
+	required int32     reciveseatid      = 2;
+	required int32     expressionid      = 3;
+}
+
+//广播玩家发送的魔法表情
+message expresionMsg
+{
+	required int32        sendseatid     = 1;
+	required int64             money     = 2;
+	required int32       taste_money     = 3;
+	required int32      reciveseatid     = 4;
+	required int32      expressionid     = 5;
+	required int32    tar_loveliness     = 6;
+}
+
+
+//返回桌子信息，玩家登陆和掉线重连触发到，用于恢复桌子状态
+message tableinfoMsg
+{
+	required uint32         state        = 1;
+	required int32          cd           = 2;
+	required int32          base_money   = 3;
+	required int32          min_money    = 4;
+	required int32          cardnums     = 5;
+	required int32          robot        = 6;
+	required int32          magicexpressioncost  = 7;
+	required int32          dealseatid           = 8;
+	required int32          roomfee              = 9;
+	required int32          auto_giveup          = 10;
+	required int32          round_flag           = 11;
+	required int32          limit_max_win        = 12;
+	required int32          cli_hb_interval      = 13;
+	required int32          pass_hu_twice        = 14;
+	required int32          max_pass_hu          = 15;
+	required int32          room_id              = 16;
+	repeated TblPlayInfo    players              = 17;
+	message TblPlayInfo
+	{
+		required uint32        uid       = 1;
+		required int32         seatid    = 2;
+		required int32         zhunbei   = 3;
+		required int32         betting   = 4;
+		required string        name      = 5;
+		required int32         sex       = 6;
+		required string        avatar    = 7;
+		required string        avatar_1  = 8;
+		required int32         max_fan   = 9;
+		required int32         loveliness_amt    = 10;
+		required int64         total_win_money   = 11;
+		required int64         money             = 12;
+		required int32         total_board       = 13;
+		required int32         total_win         = 14;
+		required int32         vlevel            = 15;
+		optional int32         train_money       = 16;
+		required string        ps                = 25;
+		required int32         hpstate           = 26;
+		required int32         quetype           = 27;
+		required int32         zmcount           = 28;
+		required int32         hpcount           = 29;
+		required int32         is_baoting        = 30;
+		required int32         pass_hu_count     = 31;
+		required int32         is_give_up        = 32;
+		required int32         is_quit           = 33;
+		required int32         handlenum         = 34;
+		optional int32         last_get_card     = 35;
+		repeated int32         handcards         = 40;
+		repeated int32         outcards          = 41;
+		repeated int32         pengcards         = 42;
+		repeated int32         flowercards       = 43;
+		repeated EatCard       eatcards          = 44;
+		repeated int32         hucards           = 45;
+		repeated GangCard      gangcards         = 46;
+		repeated int32         hpinfos           = 47;
+		
+		message EatCard
+		{
+			repeated int32     cards     = 1;
+		}
+		
+		message GangCard
+		{
+			repeated int32     cards     = 1;
+			required int32     type      = 2;
+		}
+	}	
+}
+
+
+
+
